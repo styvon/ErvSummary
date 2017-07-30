@@ -30,7 +30,8 @@ class ErvSummary:
 		
 		with open(filename) as f:
 			for line in itertools.islice(f, 1, None):
-				s , m = str.split(line)[4:6]
+				s , m = str.split(line)[6:8]
+				m = m[-5:]
 				for i in range(len(self.data)): 
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
