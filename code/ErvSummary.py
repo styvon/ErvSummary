@@ -36,7 +36,7 @@ class ErvSummary:
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
 					s = s[:moves_skip[i]]+s[moves_skip[i]+1:] # skip center
-					# print('i={},s={},m={}'.format(i,s,m))
+					print('i={},s={},m={}'.format(i,s,m))
 					self.data[i]['nERVs'][self.mtypes.index(m)*6+self.subtypes.index(s)+1]+=1
 					s = temp
 
