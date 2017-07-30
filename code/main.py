@@ -14,10 +14,11 @@ def main(argv):
 	ervdir = None
 	refdir = None
 	outputdir = None
-	nmer = None
-	center = None
+	nmer = 3
+	center = 3
+
 	try:
-		opts, args = getopt.getopt(argv,"c:e:h:n:o:r",["ervdir=","refdir=","outputdir=","nmer=","center="])
+		opts, args = getopt.getopt(argv,"c:e:h:n:o:r:",["ervdir=","refdir=","outputdir=","nmer=","center="])
 	except getopt.GetoptError:
 		print('main.py -e <ervdir> -r <refdir> -o <outputdir> -n <nmer> -c <center>')
 		sys.exit(2)
@@ -35,8 +36,8 @@ def main(argv):
 			nmer = arg
 		elif opt in ("-c", "--center"):
 			center = arg
-
-	ervsummary = ErvSummary.ErvSummary(nmer, ervdir, refdir, center)
+	
+	ervsummary = ErvSummary.ErvSummary(nmer=nmer, ervdir=ervdir, refdir=refdir, center=center)
 	ervsummary.writeERV(outputdir)
 	
 if __name__ == "__main__":

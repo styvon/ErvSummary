@@ -3,6 +3,7 @@ import os.path
 import itertools
 import pandas as pd
 import numpy as np
+import re
 
 pd.options.mode.chained_assignment = None
 
@@ -46,10 +47,11 @@ class ErvSummary:
 		moves_start = list(range(0,-nmer,-1))
 		moves_skip = list(range(0,nmer))
 		
-		with open(filename) as f:
+		with open(filename,encoding='latin-1') as f:
 			for line in itertools.islice(f, 1, None):
-				s, n  = str.split(line)[1:3]
-				n = int(n)
+				line = re.sub("\x08.", "", line)
+				s, n  = line.split("\t")[1:3]
+				n = int(float(n))
 				for i in range(len(self.data)): 
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
@@ -61,7 +63,8 @@ class ErvSummary:
 	def __init__(self, nmer, ervdir, refdir, center):
 		if is_int(nmer) == False:
 			raise ValueError('nmer should be integer greater than 1')
-		nmer = int(nmer)
+		else:
+			nmer = int(nmer)
 		center = int(center)
 		ncol = 5
 
@@ -76,35 +79,33 @@ class ErvSummary:
 			self.data[i]['mtype'] = list(itertools.chain.from_iterable(itertools.repeat(x,4 ** (nmer-1)) for x in self.mtypes))
 			self.data[i]['subtype'] = self.subtypes * 6
 			self.data[i]['pattern'] = self.patterns[i]
-		
-		if center is None:
-			center = 3
 
 		if ervdir is not None: 
 			print('counting ERV...')
-
 			if not ervdir.endswith('/'):
 				ervdir = ervdir+'/'
 
-			if not os.path.isdir(os.getcwd()+ervdir): # check valid directory for erv files
+			if not os.path.isdir(os.getcwd()+'//'+ervdir): # check valid directory for erv files
 				raise ValueError('{} is not a valid directory'.format(ervdir))
 
-			for ervfile in os.listdir(os.getcwd()+ervdir):
-				self._countERV(os.getcwd()+ervdir + ervfile, nmer, center)
+			for ervfile in os.listdir(os.getcwd()+'//'+ervdir):
+				self._countERV(os.getcwd()+'//'+ervdir + ervfile, nmer, center)
 			print('counting ERV completed')
 		else:
 			print('erv not counted as ervdir is None')
 		
 		if refdir is not None: 
-			print('counting motifs...')	
-			if not os.path.isdir(os.getcwd()+refdir): # check valid directory for ref motif files
+			print('counting motifs...')
+			if not os.path.isdir(os.getcwd()+'/'+refdir): # check valid directory for ref motif files
 				raise ValueError('{} is not a valid directory'.format(refdir))
 
 			if not refdir.endswith('/'):
 				refdir = refdir+'/'
+
 			
-			for reffile in os.listdir(os.getcwd()+refdir):	
-				self._countMOT(os.getcwd()+refdir + reffile, nmer, center)
+			for reffile in os.listdir(os.getcwd()+'//'+refdir):	
+				self._countMOT(os.getcwd()+'/'+refdir + reffile, nmer, center)
+
 			print('counting motifs completed')
 		else:
 			print('reference motifs not counted as refdir is None')
@@ -122,7 +123,7 @@ class ErvSummary:
 		if os.path.isdir(dir)==False:
 			raise ValueError('{} is not a directory'.format(dir))
 		if dir.endswith('/')==False:
-			dir = dir+'/'
+			dir = dir+'//'
 
 		out = pd.concat(self.data)
 		out.to_csv(dir+'{}mer.txt'.format(len(self.data)), sep=' ', index=False, header=True)
