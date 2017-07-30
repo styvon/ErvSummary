@@ -44,15 +44,19 @@ class ErvSummary:
 		nmer = int(nmer)
 		center = int(center)
 
-		self.patterns = set([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')])
+		self.patterns = list([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')])
 		self.mtypes = ['AT_CG', 'AT_GC', 'AT_TA', 'GC_AT', 'GC_CG', 'GC_TA']
 		self.subtypes = [''.join(i) for i in itertools.product('ACGT', repeat = (nmer-1))]
 		self.data = []
 		for i in range(0, nmer):
-			self.data.append(pd.DataFrame(np.zeros((4 ** (nmer-1) * 6, 4),dtype=np.int32),
-	                                    columns=['mtype', 'subtype', 'nERVs', 'nMotifs']))                                          
+			#####################################
+			## change column numbers with argc ###
+			#####################################
+			self.data.append(pd.DataFrame(np.zeros((4 ** (nmer-1) * 6, 5),dtype=np.int32),
+	                                    columns=['pattern', 'mtype', 'subtype', 'nERVs', 'nMotifs']))                                          
 			self.data[i]['mtype'] = list(itertools.chain.from_iterable(itertools.repeat(x,4 ** (nmer-1)) for x in self.mtypes))
 			self.data[i]['subtype'] = self.subtypes * 6
+			self.data[i]['pattern'] = self.patterns[i]
 	    
 		if center is None:
 			center = 3
@@ -88,7 +92,8 @@ class ErvSummary:
 			raise ValueError('{} is not a directory'.format(dir))
 		if dir.endswith('/')==False:
 			dir = dir+'/'
-		for i in range(0, len(self.data)):
-			self.data[i].to_csv(dir+'{}mer_{}.txt'.format(len(self.data),i), sep=' ', index=False, header=True)
+
+		out = pd.concat(self.data)
+		out.to_csv(dir+'{}mer_.txt'.format(len(self.data)), sep=' ', index=False, header=True)
 		print('writing data to {} complete'.format(dir))
         
