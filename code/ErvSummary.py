@@ -31,28 +31,45 @@ class ErvSummary:
 				s , m = str.split(line)[4:6]
 				for i in range(len(self.data)): 
 					temp = s
-					s = s[center+moves_start[i]:center+moves_start[i]+nmer] # skip center@@
-					s = s[:moves_skip[i]]+s[moves_skip[i]+1:]
+					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
+					s = s[:moves_skip[i]]+s[moves_skip[i]+1:] # skip center
 					# print('i={},s={},m={}'.format(i,s,m))
 					self.data[i]['nERVs'][self.mtypes.index(m)*6+self.subtypes.index(s)+1]+=1
 					s = temp
 
+	def _countMOT(self, filename, nmer, center):
+		"""count nMotifs from target file,
+		center: center base position in the summary data (starting from 0)"""
+		print('counting motifs...')
+		moves_start = list(range(0,-nmer,-1))
+		moves_skip = list(range(0,nmer))
+	    
+		with open(filename) as f:
+			for line in itertools.islice(f, 1, None):
+				s, n  = str.split(line)[1:3]
+				n = int(n)
+				for i in range(len(self.data)): 
+					temp = s
+					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
+					s = s[:moves_skip[i]]+s[moves_skip[i]+1:] # skip center
+					# print('i={},s={},m={}'.format(i,s,m))
+					self.data[i].ix[self.data[i].subtype == s, 'nMotifs'] += n
+					s = temp
         
 	def __init__(self, nmer, ervfile, reffile, center):
 		if is_int(nmer) == False:
 			raise ValueError('nmer should be integer greater than 1')
 		nmer = int(nmer)
 		center = int(center)
+		ncol = 5
 
 		self.patterns = list([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')])
 		self.mtypes = ['AT_CG', 'AT_GC', 'AT_TA', 'GC_AT', 'GC_CG', 'GC_TA']
 		self.subtypes = [''.join(i) for i in itertools.product('ACGT', repeat = (nmer-1))]
 		self.data = []
 		for i in range(0, nmer):
-			#####################################
-			## change column numbers with argc ###
-			#####################################
-			self.data.append(pd.DataFrame(np.zeros((4 ** (nmer-1) * 6, 5),dtype=np.int32),
+			
+			self.data.append(pd.DataFrame(np.zeros((4 ** (nmer-1) * 6, ncol),dtype=np.int32),
 	                                    columns=['pattern', 'mtype', 'subtype', 'nERVs', 'nMotifs']))                                          
 			self.data[i]['mtype'] = list(itertools.chain.from_iterable(itertools.repeat(x,4 ** (nmer-1)) for x in self.mtypes))
 			self.data[i]['subtype'] = self.subtypes * 6
@@ -71,10 +88,11 @@ class ErvSummary:
 			print('erv not counted as ervfile is None')
 	    
 		if reffile is not None:
-			#####################################
-			#### count rel rate from relfile ####
-			#####################################
-			pass
+			if os.path.isfile(ervfile)==False:
+				raise ValueError('{} is not a file'.format(ervfile))
+	            
+			self._countMOT(reffile, nmer, center)
+			print('counting motifs completed')
 		else:
 			print('reference motifs not counted as reffile is None')
 	        
