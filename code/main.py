@@ -11,24 +11,24 @@ import pandas as pd
 import ErvSummary
 
 def main(argv):
-	ervfile = None
-	reffile = None
+	ervdir = None
+	refdir = None
 	outputdir = None
 	nmer = None
 	center = None
 	try:
-		opts, args = getopt.getopt(argv,"c:e:h:n:o:r",["ervfile=","reffile=","outputdir=","nmer=","center="])
+		opts, args = getopt.getopt(argv,"c:e:h:n:o:r",["ervdir=","refdir=","outputdir=","nmer=","center="])
 	except getopt.GetoptError:
-		print('main.py -e <ervfile> -r <reffile> -o <outputdir> -n <nmer> [-c <center>]')
+		print('main.py -e <ervdir> -r <refdir> -o <outputdir> -n <nmer> -c <center>')
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print('main.py -e <ervfile> -r <reffile> -o <outputdir> -n <nmer> [-c <center>]')
+			print('main.py -e <ervdir> -r <refdir> -o <outputdir> -n <nmer> -c <center>')
 			sys.exit()
-		elif opt in ("-e", "--ervfile"):
-			ervfile = arg
-		elif opt in ("-r", "--reffile"):
-			reffile = arg
+		elif opt in ("-e", "--ervdir"):
+			ervdir = arg
+		elif opt in ("-r", "--refdir"):
+			refdir = arg
 		elif opt in ("-o", "--outputdir"):
 			outputdir = arg
 		elif opt in ("-n", "--nmer"):
@@ -36,7 +36,7 @@ def main(argv):
 		elif opt in ("-c", "--center"):
 			center = arg
 
-	ervsummary = ErvSummary.ErvSummary(nmer, ervfile, reffile, center)
+	ervsummary = ErvSummary.ErvSummary(nmer, ervdir, refdir, center)
 	ervsummary.writeERV(outputdir)
 	
 if __name__ == "__main__":

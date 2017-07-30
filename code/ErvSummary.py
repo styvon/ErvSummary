@@ -22,10 +22,11 @@ class ErvSummary:
 	def _countERV(self, filename, nmer, center):
 		"""count nERV from target file,
 		center: center base position in the summary data (starting from 0)"""
-		print('counting ERV...')
+		if not os.path.isfile(filename):
+			raise ValueError('{} is not a valid directory'.format(filename))
 		moves_start = list(range(0,-nmer,-1))
 		moves_skip = list(range(0,nmer))
-        
+		
 		with open(filename) as f:
 			for line in itertools.islice(f, 1, None):
 				s , m = str.split(line)[4:6]
@@ -40,10 +41,11 @@ class ErvSummary:
 	def _countMOT(self, filename, nmer, center):
 		"""count nMotifs from target file,
 		center: center base position in the summary data (starting from 0)"""
-		print('counting motifs...')
+		if not os.path.isfile(filename):
+			raise ValueError('{} is not a valid directory'.format(filename))
 		moves_start = list(range(0,-nmer,-1))
 		moves_skip = list(range(0,nmer))
-	    
+		
 		with open(filename) as f:
 			for line in itertools.islice(f, 1, None):
 				s, n  = str.split(line)[1:3]
@@ -55,8 +57,8 @@ class ErvSummary:
 					# print('i={},s={},m={}'.format(i,s,m))
 					self.data[i].ix[self.data[i].subtype == s, 'nMotifs'] += n
 					s = temp
-        
-	def __init__(self, nmer, ervfile, reffile, center):
+		
+	def __init__(self, nmer, ervdir, refdir, center):
 		if is_int(nmer) == False:
 			raise ValueError('nmer should be integer greater than 1')
 		nmer = int(nmer)
@@ -70,33 +72,44 @@ class ErvSummary:
 		for i in range(0, nmer):
 			
 			self.data.append(pd.DataFrame(np.zeros((4 ** (nmer-1) * 6, ncol),dtype=np.int32),
-	                                    columns=['pattern', 'mtype', 'subtype', 'nERVs', 'nMotifs']))                                          
+										columns=['pattern', 'mtype', 'subtype', 'nERVs', 'nMotifs']))										  
 			self.data[i]['mtype'] = list(itertools.chain.from_iterable(itertools.repeat(x,4 ** (nmer-1)) for x in self.mtypes))
 			self.data[i]['subtype'] = self.subtypes * 6
 			self.data[i]['pattern'] = self.patterns[i]
-	    
+		
 		if center is None:
 			center = 3
 
-		if ervfile is not None:
-			if os.path.isfile(ervfile)==False:
-				raise ValueError('{} is not a file'.format(ervfile))
-	            
-			self._countERV(ervfile, nmer, center)
+		if ervdir is not None: 
+			print('counting ERV...')
+
+			if not ervdir.endswith('/'):
+				ervdir = ervdir+'/'
+
+			if not os.path.isdir(os.getcwd()+ervdir): # check valid directory for erv files
+				raise ValueError('{} is not a valid directory'.format(ervdir))
+
+			for ervfile in os.listdir(os.getcwd()+ervdir):
+				self._countERV(os.getcwd()+ervdir + ervfile, nmer, center)
 			print('counting ERV completed')
 		else:
-			print('erv not counted as ervfile is None')
-	    
-		if reffile is not None:
-			if os.path.isfile(ervfile)==False:
-				raise ValueError('{} is not a file'.format(ervfile))
-	            
-			self._countMOT(reffile, nmer, center)
+			print('erv not counted as ervdir is None')
+		
+		if refdir is not None: 
+			print('counting motifs...')	
+			if not os.path.isdir(os.getcwd()+refdir): # check valid directory for ref motif files
+				raise ValueError('{} is not a valid directory'.format(refdir))
+
+			if not refdir.endswith('/'):
+				refdir = refdir+'/'
+			
+			for reffile in os.listdir(os.getcwd()+refdir):	
+				self._countMOT(os.getcwd()+refdir + reffile, nmer, center)
 			print('counting motifs completed')
 		else:
-			print('reference motifs not counted as reffile is None')
-	        
-		if ((ervfile is not None) & (reffile is not None)):
+			print('reference motifs not counted as refdir is None')
+			
+		if ((ervdir is not None) & (refdir is not None)):
 			print('counting relrate and wt ...')
 			total_motifs = np.sum(self.data[0].nMotifs)
 			for i in range(0, nmer):
@@ -112,6 +125,6 @@ class ErvSummary:
 			dir = dir+'/'
 
 		out = pd.concat(self.data)
-		out.to_csv(dir+'{}mer_.txt'.format(len(self.data)), sep=' ', index=False, header=True)
+		out.to_csv(dir+'{}mer.txt'.format(len(self.data)), sep=' ', index=False, header=True)
 		print('writing data to {} complete'.format(dir))
-        
+		
