@@ -114,7 +114,7 @@ class ErvSummary:
 			total_motifs = np.sum(self.data[0].nMotifs)
 			for i in range(0, nmer):
 				self.data[i]['ERV_rel_rate'] = self.data[i].nERVs / self.data[i].nMotifs
-				self.data[i]['wt'] = self.data[0].nERVs / total_motifs
+				# self.data[i]['wt'] = self.data[0].nERVs / total_motifs
 			print('counting relrate and wt completed')
 
 	def writeERV(self, dir):
