@@ -32,6 +32,7 @@ class ErvSummary:
 			for line in itertools.islice(f, 1, None):
 				s , m = str.split(line)[6:8]
 				m = m[-5:]
+
 				for i in range(len(self.data)): 
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
@@ -69,7 +70,7 @@ class ErvSummary:
 		center = int(center)
 		ncol = 5
 
-		self.patterns = list([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')])
+		self.patterns = list(set([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')]))
 		self.mtypes = ['AT_CG', 'AT_GC', 'AT_TA', 'GC_AT', 'GC_CG', 'GC_TA']
 		self.subtypes = [''.join(i) for i in itertools.product('ACGT', repeat = (nmer-1))]
 		self.data = []
