@@ -4,6 +4,7 @@ import itertools
 import pandas as pd
 import numpy as np
 import re
+from time import sleep
 
 pd.options.mode.chained_assignment = None
 
@@ -30,8 +31,17 @@ class ErvSummary:
 		
 		with open(filename) as f:
 			for line in itertools.islice(f, 1, None):
+
 				s , m = str.split(line)[6:8]
 				m = m[-5:]
+				### if subtype not in list, skip???###
+				if m not in self.subtypes:
+					print("Found an unknown mutation type", m)
+					continue
+				if s not in self.mtypes:
+					print("Found an unknown subtype", s)
+					continue
+				######################################
 
 				for i in range(len(self.data)): 
 					temp = s
@@ -54,6 +64,11 @@ class ErvSummary:
 				line = re.sub("\x08.", "", line)
 				s, n  = line.split("\t")[1:3]
 				n = int(float(n))
+				### if subtype not in list, skip???###
+				if s not in self.mtypes:
+					print("Found an unknown subtype", s)
+					continue
+				######################################
 				for i in range(len(self.data)): 
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
