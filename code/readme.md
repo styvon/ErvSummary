@@ -3,7 +3,8 @@
 ## Usage
 `main.py -e <ervdir> -r <refdir> -o <outputdir> -n <nmer> -c <center>`  
 
-Example: `python main.py -e data/files_erv -r data/files_ref -o data -n 3 -c 3`
+Example: `python code/main.py -e data/files_erv -r data/files_ref -o data -n 5 -c 4`  
+counts 5-mer patterns from 9mer files
 
 
 ## Todo

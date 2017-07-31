@@ -49,6 +49,7 @@ class ErvSummary:
 					### if subtype not in list, skip???###
 					if s not in self.subtypes:
 						print("Found an unknown subtype", s, "in pattern", self.patterns[i])
+						s = temp
 						continue
 					######################################
 					self.data[i]['nERVs'][self.mtypes.index(m)*6+self.subtypes.index(s)+1]+=1
@@ -75,6 +76,7 @@ class ErvSummary:
 					### if subtype not in list, skip???###
 					if s not in self.subtypes:
 						print("Found an unknown subtype", s, "in pattern", self.patterns[i])
+						s = temp
 						continue
 					######################################
 					# print('i={},s={},m={}'.format(i,s,m))
