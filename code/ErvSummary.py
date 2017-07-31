@@ -34,13 +34,11 @@ class ErvSummary:
 
 				s , m = str.split(line)[6:8]
 				m = m[-5:]
-				### if subtype not in list, skip???###
-				if m not in self.subtypes:
+				### if mutation type not in list, skip???###
+				if m not in self.mtypes:
 					print("Found an unknown mutation type", m)
 					continue
-				if s not in self.mtypes:
-					print("Found an unknown subtype", s)
-					continue
+				
 				######################################
 
 				for i in range(len(self.data)): 
@@ -48,6 +46,11 @@ class ErvSummary:
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
 					s = s[:moves_skip[i]]+s[moves_skip[i]+1:] # skip center
 					# print('i={},s={},m={}'.format(i,s,m))
+					### if subtype not in list, skip???###
+					if s not in self.subtypes:
+						print("Found an unknown subtype", s, "in pattern", self.patterns[i])
+						continue
+					######################################
 					self.data[i]['nERVs'][self.mtypes.index(m)*6+self.subtypes.index(s)+1]+=1
 					s = temp
 
@@ -64,15 +67,16 @@ class ErvSummary:
 				line = re.sub("\x08.", "", line)
 				s, n  = line.split("\t")[1:3]
 				n = int(float(n))
-				### if subtype not in list, skip???###
-				if s not in self.mtypes:
-					print("Found an unknown subtype", s)
-					continue
-				######################################
+
 				for i in range(len(self.data)): 
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
 					s = s[:moves_skip[i]]+s[moves_skip[i]+1:] # skip center
+					### if subtype not in list, skip???###
+					if s not in self.subtypes:
+						print("Found an unknown subtype", s, "in pattern", self.patterns[i])
+						continue
+					######################################
 					# print('i={},s={},m={}'.format(i,s,m))
 					self.data[i].ix[self.data[i].subtype == s, 'nMotifs'] += n
 					s = temp
