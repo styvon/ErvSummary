@@ -92,7 +92,8 @@ class ErvSummary:
 		center = int(center)
 		ncol = 5
 
-		self.patterns = list(set([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')])).sort()
+		self.patterns = list(set([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')]))
+		self.patterns.sort()
 		self.mtypes = ['AT_CG', 'AT_GC', 'AT_TA', 'GC_AT', 'GC_CG', 'GC_TA']
 		self.subtypes = [''.join(i) for i in itertools.product('ACGT', repeat = (nmer-1))]
 		self.data = []
