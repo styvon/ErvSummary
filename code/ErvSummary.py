@@ -63,7 +63,8 @@ class ErvSummary:
 		moves_start = list(range(0,-nmer,-1))
 		moves_skip = list(range(0,nmer))
 		
-		with open(filename,encoding='latin-1') as f:
+		#with open(filename,encoding='latin-1') as f:
+		with open(filename) as f:
 			for line in itertools.islice(f, 1, None):
 				line = re.sub("\x08.", "", line)
 				s, n  = line.split("\t")[1:3]
@@ -91,7 +92,7 @@ class ErvSummary:
 		center = int(center)
 		ncol = 5
 
-		self.patterns = list(set([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')]))
+		self.patterns = list(set([''.join(i) for i in itertools.permutations('X'*(nmer-1)+'*')])).sort()
 		self.mtypes = ['AT_CG', 'AT_GC', 'AT_TA', 'GC_AT', 'GC_CG', 'GC_TA']
 		self.subtypes = [''.join(i) for i in itertools.product('ACGT', repeat = (nmer-1))]
 		self.data = []
