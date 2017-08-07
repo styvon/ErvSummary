@@ -28,6 +28,7 @@ class ErvSummary:
 			raise ValueError('{} is not a valid directory'.format(filename))
 		moves_start = list(range(0,-nmer,-1))
 		moves_skip = list(range(0,nmer))
+		step = (4**(nmer-1))
 		
 		with open(filename) as f:
 			for line in itertools.islice(f, 1, None):
@@ -52,7 +53,7 @@ class ErvSummary:
 						s = temp
 						continue
 					######################################
-					self.data[i]['nERVs'][self.mtypes.index(m)*6+self.subtypes.index(s)+1]+=1
+					self.data[i]['nERVs'][self.mtypes.index(m)*step+self.subtypes.index(s)+1]+=1
 					s = temp
 
 	def _countMOT(self, filename, nmer, center):
