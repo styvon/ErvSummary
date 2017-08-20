@@ -74,15 +74,16 @@ class ErvSummary:
 				for i in range(len(self.data)): 
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
-					s = s[:moves_skip[i]]+s[moves_skip[i]+1:] # skip center
-					### if subtype not in list, skip???###
-					if s not in self.subtypes:
+					s_type = s[:moves_skip[i]]+s[moves_skip[i]+1:] # strip subtype by skipping center posi
+					s_cent = s[moves_skip] # strip "center" site
+					### if subtype not in list, skip current scan###
+					if s_type not in self.subtypes:
 						print("Found an unknown subtype", s, "in pattern", self.patterns[i])
 						s = temp
 						continue
 					######################################
 					# print('i={},s={},m={}'.format(i,s,m))
-					self.data[i].ix[self.data[i].subtype == s, 'nMotifs'] += n
+					self.data[i].loc[ (self.data[i].subtype == s_type) & (self.data[i].mtype.str[:1] == s_cent) , 'nMotifs'] += n
 					s = temp
 		
 	def __init__(self, nmer, ervdir, refdir, center):
