@@ -42,7 +42,6 @@ The command above counts 5-mer patterns from 9mer ERV data
 
 ## 3. To do 
 <a name="todo"></a>  
-- fix countMOT (exclude motifs with the same context but cannot generate the ERV sequence) 
 - integrate plotting function (`code/plotGen.R`)
 - adapt to original vcf file in order to examine longer sequences
 

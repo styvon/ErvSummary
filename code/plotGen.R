@@ -56,7 +56,7 @@ dataERV <- function(filedir, nmer){
 }
 
 plotGen <- function(filedir, nmer, fign=1, choice=1,rerun=TRUE){
-  # if dataERV is already run once then skip
+  # if dataERV has already run once then skip
   if(rerun)
     dataERV(filedir, nmer)
   
@@ -64,7 +64,7 @@ plotGen <- function(filedir, nmer, fign=1, choice=1,rerun=TRUE){
   if(choice==1){
     plot <- ggplot(aic_grouped,aes(x = .r, y = aic, color = aic)) + 
       scale_fill_gradient2() +
-      geom_point(stat="identity", size=5) +
+      geom_point(stat="identity", size=3) +
       # geom_text(aes(label = formatC(aic, format="e", digits=3)), vjust = 2) +
       ggtitle(paste0("Fig.", fign, " Comparison of AIC by mutation type and pattern (", nmer, "-mer)")) +
       facet_wrap(~mtype,shrink=FALSE, scales = "free", ncol=3) +

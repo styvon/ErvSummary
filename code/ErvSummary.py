@@ -75,7 +75,7 @@ class ErvSummary:
 					temp = s
 					s = s[center+moves_start[i]:center+moves_start[i]+nmer] 
 					s_type = s[:moves_skip[i]]+s[moves_skip[i]+1:] # strip subtype by skipping center posi
-					s_cent = s[moves_skip] # strip "center" site
+					s_cent = s[moves_skip[i]] # strip "center" site
 					### if subtype not in list, skip current scan###
 					if s_type not in self.subtypes:
 						print("Found an unknown subtype", s, "in pattern", self.patterns[i])
